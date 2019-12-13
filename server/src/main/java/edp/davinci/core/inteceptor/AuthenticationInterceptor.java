@@ -28,7 +28,7 @@ import edp.core.utils.TokenUtils;
 import edp.davinci.core.common.Constants;
 import edp.davinci.core.common.ResultMap;
 import edp.davinci.model.User;
-import edp.davinci.service.UserService;
+import edp.davinci.service.impl.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;

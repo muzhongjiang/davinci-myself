@@ -21,6 +21,8 @@ package edp.davinci.service.screenshot;
 
 import com.alibaba.druid.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.ibatis.reflection.ExceptionUtil;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -76,7 +78,7 @@ public class ScreenshotUtil {
                     content.setContent(image);
                 } catch (Exception e) {
                     log.error("error ScreenshotUtil.screenshot, ", e);
-                    e.printStackTrace();
+                    log.error(ExceptionUtils.getFullStackTrace(e));
                 } finally {
                     countDownLatch.countDown();
                     log.info("thread for screenshot finish, type: {}, id: {}", content.getDesc(), content.getCId());
@@ -89,12 +91,13 @@ public class ScreenshotUtil {
                 }
                 countDownLatch.await();
             } catch (ExecutionException e) {
+                log.error(ExceptionUtils.getFullStackTrace(e));
             }
 
             imageContents.sort(Comparator.comparing(ImageContent::getOrder));
 
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error(ExceptionUtils.getFullStackTrace(e));
         } finally {
             log.info("finish screenshot for job: {}", jobId);
         }
@@ -131,7 +134,7 @@ public class ScreenshotUtil {
             Thread.sleep(2000);
             return ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error(ExceptionUtils.getFullStackTrace(e));
         } finally {
             log.info("finish get {}, webdriver will quit soon", url);
             driver.quit();
@@ -164,21 +167,20 @@ public class ScreenshotUtil {
         File file = new File(CHROME_DRIVER_PATH);
         if (!file.canExecute()) {
             if (!file.setExecutable(true)) {
-                throw new ExecutionException(new Exception(CHROME_DRIVER_PATH + "is not executable!"));
+                throw new ExecutionException(new Exception(CHROME_DRIVER_PATH + " 不能执行"));
             }
         }
 
         log.info("Generating Chrome driver ({})...", CHROME_DRIVER_PATH);
         System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY, CHROME_DRIVER_PATH);
-        ChromeOptions options = new ChromeOptions();
-
-        options.addArguments("headless");
-        options.addArguments("no-sandbox");
-        options.addArguments("disable-gpu");
-        options.addArguments("disable-features=NetworkService");
-        options.addArguments("ignore-certificate-errors");
-        options.addArguments("silent");
-        options.addArguments("--disable-application-cache");
+        ChromeOptions options = new ChromeOptions()
+        .addArguments("headless")//无头
+        .addArguments("no-sandbox")
+        .addArguments("disable-gpu")
+        .addArguments("disable-features=NetworkService")
+        .addArguments("ignore-certificate-errors")
+        .addArguments("silent")
+        .addArguments("--disable-application-cache");
 
         return new ChromeDriver(options);
     }

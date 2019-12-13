@@ -28,7 +28,7 @@ import edp.davinci.core.common.Constants;
 import edp.davinci.core.common.ResultMap;
 import edp.davinci.dto.userDto.*;
 import edp.davinci.model.User;
-import edp.davinci.service.UserService;
+import edp.davinci.service.impl.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

@@ -1,8 +1,4 @@
-/*
- *
- * Schedule
- *
- */
+
 
 import React, { createRef } from 'react'
 import { connect } from 'react-redux'
